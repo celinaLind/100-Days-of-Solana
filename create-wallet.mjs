@@ -1,8 +1,13 @@
-import { generateKeyPairSigner } from "@solana/kit"
+import { generateKeyPairSigner, createSolanaRpc, devnet } from "@solana/kit"
 
+const rpc = createSolanaRpc(devnet("https://api.devnet.solana.com"));
 // Generate a brand new keypair
 const wallet = await generateKeyPairSigner();
 
 console.log("Wallet address:", wallet.address);
-console.log("\nThis address is your public key. It's safe to share.")
-console.log("The private key stays in memory. In a real app, you'd save it securely.")
+
+// Check the balance of the new wallet
+const {value: balance} = await rpc.getBalance(wallet.address).send();
+const balanceInSol = Number(balance) / 1_000_000_000;
+
+console.log("Wallet balance:", balanceInSol, "SOL");
